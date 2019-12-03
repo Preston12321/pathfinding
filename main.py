@@ -1,3 +1,4 @@
+import json
 import pygame
 
 # Constants to define the scale of our tiles and screen
@@ -27,22 +28,24 @@ DEFAULT_LEVEL = "default-level.json"
 
 
 class Level(object):
-    # TODO: Load level file in constructor
     def __init__(self, file_name: str = DEFAULT_LEVEL):
-        self.cells = []
-        for x in range(0, CELL_COUNT_X):
-            column = []
-            for y in range(0, CELL_COUNT_Y):
-                window_x = x * (CELL_WIDTH + DIVIDER_WIDTH)
-                window_y = y * (CELL_HEIGHT + DIVIDER_WIDTH)
-                rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
-                # TODO: Get cell info from level file
-                column.append(Cell(rect, x, y, False))
-            self.cells.append(column)
+        with open(file_name) as level_file:
+            data = json.load(level_file)
+            # A 2D array of booleans to signify where the walls are in the level
+            walls = data['walls']
+            self.cells = []
+            for x in range(0, CELL_COUNT_X):
+                column = []
+                for y in range(0, CELL_COUNT_Y):
+                    window_x = x * (CELL_WIDTH + DIVIDER_WIDTH)
+                    window_y = y * (CELL_HEIGHT + DIVIDER_WIDTH)
+                    rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
+                    column.append(Cell(rect, x, y, walls[x][y]))
+                self.cells.append(column)
 
-        for x in range(0, CELL_COUNT_X):
-            for y in range(0, CELL_COUNT_Y):
-                self.define_neighbors(self.get_cell(x, y))
+        for column in self.cells:
+            for cell in column:
+                self.define_neighbors(cell)
 
     def get_cell(self, x, y):
         return self.cells[x][y]
@@ -76,7 +79,7 @@ class Level(object):
 
 
 class Cell(object):
-    def __init__(self, rect: pygame.Rect, x, y, is_wall: bool,):
+    def __init__(self, rect: pygame.Rect, x, y, is_wall: bool):
         self.x = x
         self.y = y
         self.rect = rect
