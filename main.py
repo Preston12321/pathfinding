@@ -106,9 +106,17 @@ def main():
     level = Level()
 
     while True:
-        pygame.time.wait(30)
+        # Handle events in the queue
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit(0)
+
+        # Render frame to screen
         updates = level.render(window)
         pygame.display.update(updates)
+
+        # Wait 30 milliseconds between frames
+        pygame.time.wait(30)
 
 
 if __name__ == "__main__":
