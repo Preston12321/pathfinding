@@ -50,8 +50,13 @@ class Level(object):
     def get_cell(self, x, y):
         return self.cells[x][y]
 
-    def render(self):
-        pass
+    def render(self, surface: pygame.Surface):
+        rects = []
+        for column in self.cells:
+            for cell in column:
+                rect = pygame.draw.rect(surface, cell.color, cell.rect)
+                rects.append(rect)
+        return rects
 
     def define_neighbors(self, cell):
         x = cell.x
@@ -100,20 +105,11 @@ def main():
     # Initialize the default level
     level = Level()
 
-    clock = pygame.time.Clock()
-
-    # TODO: This code was copy-pasted, probably not what we want; should change
-    background, overlay_dict = level.render()
-    overlays = pygame.sprite.RenderUpdates()
-    for (x, y), image in overlay_dict.iteritems():
-        overlay = pygame.sprite.Sprite(overlays)
-        overlay.image = image
-        overlay.rect = image.get_rect().move(x * 24, y * 16 - 16)
-    window.blit(background, (0, 0))
-    overlays.draw(window)
-    pygame.display.flip()
+    while True:
+        pygame.time.wait(30)
+        updates = level.render(window)
+        pygame.display.update(updates)
 
 
 if __name__ == "__main__":
     main()
-
