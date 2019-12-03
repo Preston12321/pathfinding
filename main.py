@@ -30,15 +30,19 @@ class Level(object):
     # TODO: Load level file in constructor
     def __init__(self, file_name: str = DEFAULT_LEVEL):
         self.cells = []
-        for x in range(0, CELL_COUNT_X - 1):
+        for x in range(0, CELL_COUNT_X):
             column = []
-            for y in range(0, CELL_COUNT_Y - 1):
+            for y in range(0, CELL_COUNT_Y):
                 window_x = x * (CELL_WIDTH + DIVIDER_WIDTH)
                 window_y = y * (CELL_HEIGHT + DIVIDER_WIDTH)
                 rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
                 # TODO: Get cell info from level file
-                column.append(Cell(rect))
+                column.append(Cell(rect, x, y, False))
             self.cells.append(column)
+
+        for x in range(0, CELL_COUNT_X):
+            for y in range(0, CELL_COUNT_Y):
+                self.define_neighbors(self.get_cell(x, y))
 
     def get_cell(self, x, y):
         return self.cells[x][y]
@@ -46,11 +50,44 @@ class Level(object):
     def render(self):
         pass
 
+    def define_neighbors(self, cell):
+        x = cell.x
+        y = cell.y
+
+        if x != 0:
+            cell.add_neighbor(self.cells[x - 1][y])
+            if y != 0:
+                cell.add_neighbor(self.cells[x - 1][y - 1])
+            if y != CELL_COUNT_Y - 1:
+                cell.add_neighbor(self.cells[x - 1][y + 1])
+
+        if x != CELL_COUNT_X - 1:
+            cell.add_neighbor(self.cells[x + 1][y])
+            if y != 0:
+                cell.add_neighbor(self.cells[x + 1][y - 1])
+            if y != CELL_COUNT_Y - 1:
+                cell.add_neighbor(self.cells[x + 1][y + 1])
+
+        if y != 0:
+            cell.add_neighbor(self.cells[x][y - 1])
+
+        if y != CELL_COUNT_Y - 1:
+            cell.add_neighbor(self.cells[x][y + 1])
+
 
 class Cell(object):
-    def __init__(self, rect: pygame.Rect, is_wall: bool):
+    def __init__(self, rect: pygame.Rect, x, y, is_wall: bool,):
+        self.x = x
+        self.y = y
         self.rect = rect
         self.color = CELL_COLOR_WALL if is_wall else CELL_COLOR_EMPTY
+        self.neighbors = []
+
+    def add_neighbor(self, neighbor):
+        self.neighbors.append(neighbor)
+
+    def __str__(self):
+        return "("+str(self.x)+", "+str(self.y)+")"
 
 
 def main():
