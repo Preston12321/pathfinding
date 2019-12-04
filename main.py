@@ -133,9 +133,23 @@ class ActionBar(object):
     def __init__(self):
         self.rect = pygame.Rect((0, 0, WINDOW_WIDTH, ACTION_BAR_HEIGHT))
         self.color = ACTION_BAR_COLOR
+        # TODO: Create action buttons
 
     def render(self, surface: pygame.Surface):
+        # TODO: render each button
         return pygame.draw.rect(surface, self.color, self.rect)
+
+
+class Button(object):
+    def __init__(self, text: str, rect: pygame.Rect, color: pygame.Color):
+        self.text = text
+        self.rect = rect
+        self.color = color
+        self.font = pygame.font.Font(None, 12)
+
+    def render(self, surface):
+        # TODO: Render using font.render() and surface.blit()
+        pass
 
 
 def main():
