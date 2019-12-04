@@ -49,6 +49,13 @@ class Level(object):
             for cell in column:
                 self.define_neighbors(cell)
 
+    def adjacency_dict(self):
+        dicta = {}
+        for column in self.cells:
+            for cell in column:
+                dicta[cell] = cell.neighbors
+        return dicta
+
     def get_cell(self, x, y):
         return self.cells[x][y]
 
@@ -63,6 +70,9 @@ class Level(object):
     def define_neighbors(self, cell):
         x = cell.x
         y = cell.y
+
+        if cell.is_wall:
+            return
 
         if x != 0:
             cell.add_neighbor(self.cells[x - 1][y])
@@ -92,11 +102,16 @@ class Cell(object):
         self.rect = rect
         self.color = CELL_COLOR_WALL if is_wall else CELL_COLOR_EMPTY
         self.neighbors = []
+        self.is_wall = is_wall
 
-    def add_neighbor(self, neighbor):
-        self.neighbors.append(neighbor)
+    def add_neighbor(self, neighbor: "Cell"):
+        if not neighbor.is_wall:
+            self.neighbors.append(neighbor)
 
     def __str__(self):
+        return "(" + str(self.x) + ", " + str(self.y) + ")"
+
+    def __repr__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
 
 
