@@ -45,6 +45,9 @@ class Level(object):
                     column.append(Cell(rect, x, y, walls[x][y]))
                 self.cells.append(column)
 
+        self.update_neighbors()
+
+    def update_neighbors(self):
         for column in self.cells:
             for cell in column:
                 self.define_neighbors(cell)
@@ -82,6 +85,7 @@ class Level(object):
         y = cell.y
 
         if cell.is_wall:
+            cell.neighbors = []
             return
 
         if x != 0:
@@ -176,11 +180,12 @@ def main():
                 if event.button == 1:
                     mouse_held = False
 
-        # changes cells to wall when mouse is over
+        # changes cells to wall when mouse is drug over
         mouse_pos = pygame.mouse.get_pos()
-        mouse_cell = level.get_cell_from_window(mouse_pos[0],mouse_pos[1])
+        mouse_cell = level.get_cell_from_window(mouse_pos[0], mouse_pos[1])
         if mouse_held:
             level.set_wall(mouse_cell)
+        level.update_neighbors()
 
         # Render frame to screen
         updates = level.render(window)
