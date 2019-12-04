@@ -153,7 +153,8 @@ def main():
         # Handle events in the queue
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit(0)
+                pygame.quit()
+                quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_held = True
