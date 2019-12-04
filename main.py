@@ -59,6 +59,16 @@ class Level(object):
     def get_cell(self, x, y):
         return self.cells[x][y]
 
+    def get_cell_from_window(self, window_x, window_y):
+        for column in self.cells:
+            for cell in column:
+                if cell.rect.collidepoint(window_x, window_y):
+                    return cell
+
+    def set_wall(self, cell):
+        if cell is not None:
+            cell.set_wall()
+
     def render(self, surface: pygame.Surface):
         rects = []
         for column in self.cells:
@@ -108,6 +118,10 @@ class Cell(object):
         if not neighbor.is_wall:
             self.neighbors.append(neighbor)
 
+    def set_wall(self):
+        self.is_wall = True
+        self.color = CELL_COLOR_WALL
+
     def __str__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
 
@@ -133,12 +147,25 @@ def main():
 
     # Initialize the default level
     level = Level()
+    mouse_held = False
 
     while True:
         # Handle events in the queue
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit(0)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mouse_held = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    mouse_held = False
+
+        # changes cells to wall when mouse is over
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_cell = level.get_cell_from_window(mouse_pos[0],mouse_pos[1])
+        if mouse_held:
+            level.set_wall(mouse_cell)
 
         # Render frame to screen
         updates = level.render(window)
