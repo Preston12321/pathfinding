@@ -1,0 +1,27 @@
+import random
+import main
+import json
+
+def createRandomLevel():
+    wall_chance = 0.2
+    ret = []
+
+    for x in range(0, main.CELL_COUNT_X):
+        column = []
+        for y in range(0, main.CELL_COUNT_Y):
+            column.append(random.random() <= wall_chance)
+        ret.append(column)
+
+    return ret
+
+
+def writeRandomLevelFile():
+    data = {}
+    data["walls"] = createRandomLevel()
+
+    with open("random.json", "w") as outfile:
+        json.dump(data, outfile) # https://stackabuse.com/reading-and-writing-json-to-a-file-in-python/
+
+
+if __name__ == '__main__':
+    writeRandomLevelFile()
