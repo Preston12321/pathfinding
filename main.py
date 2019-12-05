@@ -1,13 +1,16 @@
 import json
 import pygame
+import math
 
 # Constants to define the scale of our tiles and screen
 DIVIDER_WIDTH = 1
 ACTION_BAR_HEIGHT = 40
 CELL_WIDTH = 20
 CELL_HEIGHT = 20
-CELL_COUNT_X = 32
-CELL_COUNT_Y = 32
+CELL_COUNT_X = 25
+CELL_COUNT_Y = 25
+START_NODE = (5, 5)
+DESTINATION_NODE = (22, 22)
 
 # Calculate the actual pixel dimensions of our window
 WINDOW_WIDTH = CELL_WIDTH * CELL_COUNT_X + DIVIDER_WIDTH * (CELL_COUNT_X - 1)
@@ -23,10 +26,21 @@ CELL_COLOR_EMPTY = pygame.Color(240, 240, 240)
 CELL_COLOR_WALL = pygame.Color(60, 60, 60)
 # noinspection PyArgumentList
 CELL_COLOR_EXPLORED = pygame.Color(0, 255, 0)
-CELL_COLOR_START = CELL_COLOR_EXPLORED
-CELL_COLOR_DESTINATION = CELL_COLOR_EMPTY
+# noinspection PyArgumentList
+CELL_COLOR_START = pygame.Color(0, 255, 0)
+# noinspection PyArgumentList
+CELL_COLOR_DESTINATION = pygame.Color(255, 0, 0)
 
-DEFAULT_LEVEL = "default-level.json"
+DEFAULT_LEVEL = "blank.json"
+
+
+def distance(cell_1, cell_2):
+    return math.sqrt((cell_1.x - cell_2.x) ** 2 + (cell_1.y - cell_2.y) ** 2)
+
+
+def set_wall(cell):
+    if cell is not None and not cell.is_start and not cell.is_destination and not cell.is_wall:
+        cell.make_wall()
 
 
 class Level(object):
@@ -42,9 +56,13 @@ class Level(object):
                     window_x = x * (CELL_WIDTH + DIVIDER_WIDTH)
                     window_y = y * (CELL_HEIGHT + DIVIDER_WIDTH) + ACTION_BAR_HEIGHT
                     rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
-                    column.append(Cell(rect, x, y, walls[x][y]))
+                    c = Cell(rect, x, y, walls[x][y])
+                    if x == START_NODE[0] and y == START_NODE[1]:
+                        c.make_start()
+                    if x == DESTINATION_NODE[0] and y == DESTINATION_NODE[1]:
+                        c.make_destination()
+                    column.append(c)
                 self.cells.append(column)
-
         self.update_neighbors()
 
     def update_neighbors(self):
@@ -67,10 +85,6 @@ class Level(object):
             for cell in column:
                 if cell.rect.collidepoint(window_x, window_y):
                     return cell
-
-    def set_wall(self, cell):
-        if cell is not None:
-            cell.set_wall()
 
     def render(self, surface: pygame.Surface):
         rects = []
@@ -117,14 +131,24 @@ class Cell(object):
         self.color = CELL_COLOR_WALL if is_wall else CELL_COLOR_EMPTY
         self.neighbors = []
         self.is_wall = is_wall
+        self.is_destination = False
+        self.is_start = False
 
     def add_neighbor(self, neighbor: "Cell"):
         if not neighbor.is_wall:
             self.neighbors.append(neighbor)
 
-    def set_wall(self):
+    def make_wall(self):
         self.is_wall = True
         self.color = CELL_COLOR_WALL
+
+    def make_destination(self):
+        self.is_destination = True
+        self.color = CELL_COLOR_DESTINATION
+
+    def make_start(self):
+        self.is_start = True
+        self.color = CELL_COLOR_START
 
     def __str__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
@@ -181,11 +205,11 @@ def main():
                     mouse_held = False
 
         # changes cells to wall when mouse is drug over
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_cell = level.get_cell_from_window(mouse_pos[0], mouse_pos[1])
         if mouse_held:
-            level.set_wall(mouse_cell)
-        level.update_neighbors()
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_cell = level.get_cell_from_window(mouse_pos[0], mouse_pos[1])
+            set_wall(mouse_cell)
+            level.update_neighbors()
 
         # Render frame to screen
         updates = level.render(window)
