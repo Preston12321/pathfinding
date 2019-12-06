@@ -19,7 +19,13 @@ WINDOW_HEIGHT = CELL_HEIGHT * CELL_COUNT_Y + DIVIDER_WIDTH * (CELL_COUNT_Y - 1) 
 # TODO: Pick good cell colors
 # Color scheme constants
 # noinspection PyArgumentList
-ACTION_BAR_COLOR = pygame.Color(255, 255, 102)
+ACTION_BAR_COLOR = pygame.Color(255, 255, 255)
+# noinspection PyArgumentList
+BUTTON_TEXT_COLOR = pygame.Color(255, 255, 255)
+# noinspection PyArgumentList
+BUTTON_COLOR_RUN = pygame.Color(97, 243, 97)
+# noinspection PyArgumentList
+BUTTON_COLOR_CLEAR = pygame.Color(243, 97, 97)
 # noinspection PyArgumentList
 CELL_COLOR_EMPTY = pygame.Color(240, 240, 240)
 # noinspection PyArgumentList
@@ -86,6 +92,11 @@ class Level(object):
                 if cell.rect.collidepoint(window_x, window_y):
                     return cell
 
+    def clear_walls(self):
+        for column in self.cells:
+            for cell in column:
+                cell.set_wall(False)
+
     def render(self, surface: pygame.Surface):
         rects = []
         for column in self.cells:
@@ -138,9 +149,9 @@ class Cell(object):
         if not neighbor.is_wall:
             self.neighbors.append(neighbor)
 
-    def make_wall(self):
-        self.is_wall = True
-        self.color = CELL_COLOR_WALL
+    def set_wall(self, wall: bool):
+        self.is_wall = wall
+        self.color = CELL_COLOR_WALL if wall else CELL_COLOR_EMPTY
 
     def make_destination(self):
         self.is_destination = True
@@ -162,22 +173,37 @@ class ActionBar(object):
         self.rect = pygame.Rect((0, 0, WINDOW_WIDTH, ACTION_BAR_HEIGHT))
         self.color = ACTION_BAR_COLOR
         # TODO: Create action buttons
+        self.buttons = []
+        self.buttons.append(Button(10, 4, "Run", BUTTON_COLOR_RUN))
+        self.buttons.append(Button(80, 4, "Clear", BUTTON_COLOR_CLEAR))
 
     def render(self, surface: pygame.Surface):
         # TODO: render each button
-        return pygame.draw.rect(surface, self.color, self.rect)
+        rects = [pygame.draw.rect(surface, self.color, self.rect)]
+        for button in self.buttons:
+            rects.append(button.render(surface))
+        return rects
+
+    def get_button_from_window(self, x, y):
+        for button in self.buttons:
+            if button.rect.collidepoint(x, y):
+                return button
+        return None
 
 
 class Button(object):
-    def __init__(self, text: str, rect: pygame.Rect, color: pygame.Color):
+    def __init__(self, x, y, text: str, color: pygame.Color):
+        self.x = x
+        self.y = y
         self.text = text
-        self.rect = rect
         self.color = color
-        self.font = pygame.font.Font(None, 12)
+        self.font = pygame.font.Font(None, 40)
+        width, height = self.font.size(text)
+        self.rect = pygame.Rect(x, y, width, height)
 
-    def render(self, surface):
-        # TODO: Render using font.render() and surface.blit()
-        pass
+    def render(self, surface: pygame.Surface):
+        button_surface = self.font.render(self.text, True, BUTTON_TEXT_COLOR, self.color)
+        return surface.blit(button_surface, (self.x, self.y))
 
 
 def main():
@@ -190,6 +216,7 @@ def main():
     # Initialize the default level
     level = Level()
     mouse_held = False
+    button_clicked = None
 
     while True:
         # Handle events in the queue
@@ -199,10 +226,21 @@ def main():
                 quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    mouse_held = True
+                    button_clicked = action_bar.get_button_from_window(event.pos[0], event.pos[1])
+                    if button_clicked is None:
+                        mouse_held = True
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     mouse_held = False
+                    button_under_mouse = action_bar.get_button_from_window(event.pos[0], event.pos[1])
+                    if button_clicked is not None and button_clicked is button_under_mouse:
+                        # TODO: Do things based on which button was clicked
+                        if button_clicked.text == "Run":
+                            # TODO: Begin algorithm animation
+                            pass
+                        if button_clicked.text == "Clear":
+                            level.clear_walls()
+                    button_clicked = None
 
         # changes cells to wall when mouse is drug over
         if mouse_held:
@@ -213,7 +251,7 @@ def main():
 
         # Render frame to screen
         updates = level.render(window)
-        updates.append(action_bar.render(window))
+        updates.extend(action_bar.render(window))
         pygame.display.update(updates)
 
         # Wait 30 milliseconds between frames
