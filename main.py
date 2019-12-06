@@ -290,8 +290,8 @@ def main():
         updates.extend(action_bar.render(window))
         pygame.display.update(updates)
 
-        # Wait 30 milliseconds between frames
-        pygame.time.wait(30)
+        # Wait between frames
+        pygame.time.wait(10)
 
 
 if __name__ == "__main__":
