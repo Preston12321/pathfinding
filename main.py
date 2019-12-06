@@ -1,6 +1,7 @@
 import json
 import pygame
 import math
+import a_star
 
 # Constants to define the scale of our tiles and screen
 DIVIDER_WIDTH = 1
@@ -9,8 +10,8 @@ CELL_WIDTH = 20
 CELL_HEIGHT = 20
 CELL_COUNT_X = 25
 CELL_COUNT_Y = 25
-START_NODE = (5, 5)
-DESTINATION_NODE = (22, 22)
+START_NODE = (0, 0)
+DESTINATION_NODE = (5, 5)
 
 # Calculate the actual pixel dimensions of our window
 WINDOW_WIDTH = CELL_WIDTH * CELL_COUNT_X + DIVIDER_WIDTH * (CELL_COUNT_X - 1)
@@ -38,13 +39,11 @@ def distance(cell_1, cell_2):
     return math.sqrt((cell_1.x - cell_2.x) ** 2 + (cell_1.y - cell_2.y) ** 2)
 
 
-def set_wall(cell):
-    if cell is not None and not cell.is_start and not cell.is_destination and not cell.is_wall:
-        cell.make_wall()
-
-
 class Level(object):
     def __init__(self, file_name: str = DEFAULT_LEVEL):
+        self.start = None
+        self.destination = None
+
         with open(file_name) as level_file:
             data = json.load(level_file)
             # A 2D array of booleans to signify where the walls are in the level
@@ -59,13 +58,23 @@ class Level(object):
                     c = Cell(rect, x, y, walls[x][y])
                     if x == START_NODE[0] and y == START_NODE[1]:
                         c.make_start()
+                        self.start = c
                     if x == DESTINATION_NODE[0] and y == DESTINATION_NODE[1]:
                         c.make_destination()
+                        self.destination = c
                     column.append(c)
                 self.cells.append(column)
-        self.update_neighbors()
+        self.set_neighbors()
 
-    def update_neighbors(self):
+    def set_wall(self, wall: "Cell"):
+        if wall is not None and not wall.is_start and not wall.is_destination and not wall.is_wall:
+            wall.make_wall()
+        for column in self.cells:
+            for cell in column:
+                if wall in cell.neighbors:
+                    cell.neighbors.remove(wall)
+
+    def set_neighbors(self):
         for column in self.cells:
             for cell in column:
                 self.define_neighbors(cell)
@@ -135,12 +144,13 @@ class Cell(object):
         self.is_start = False
 
     def add_neighbor(self, neighbor: "Cell"):
-        if not neighbor.is_wall:
+        if not neighbor.is_wall and neighbor not in self.neighbors:
             self.neighbors.append(neighbor)
 
     def make_wall(self):
         self.is_wall = True
         self.color = CELL_COLOR_WALL
+        self.neighbors = []
 
     def make_destination(self):
         self.is_destination = True
@@ -203,13 +213,16 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     mouse_held = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    a_star.a_star(level.start, level.destination)
 
         # changes cells to wall when mouse is drug over
         if mouse_held:
             mouse_pos = pygame.mouse.get_pos()
             mouse_cell = level.get_cell_from_window(mouse_pos[0], mouse_pos[1])
-            set_wall(mouse_cell)
-            level.update_neighbors()
+            level.set_wall(mouse_cell)
+            level.set_neighbors()
 
         # Render frame to screen
         updates = level.render(window)

@@ -34,6 +34,8 @@ def a_star(start: main.Cell, destination: main.Cell):
             print("path is: {}".format(path))
             return path
 
+        print(best)
+        print(best.neighbors)
         for m in best.neighbors:
             if m not in open_list and m not in closed_list:
                 open_list.add(m)
