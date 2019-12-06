@@ -42,7 +42,7 @@ def a_star(start: main.Cell, destination: main.Cell):
                 g[m] = g[best] + 1
             else:
                 if g[m] > g[best] + 1:
-                    g[m] = g[best] + 1
+                    g[m] = g[best] + 1  # TODO: change diagonal weight to sqrt(2)
                     parents[m] = best
 
                     if m in closed_list:

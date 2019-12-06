@@ -107,6 +107,11 @@ class Level(object):
                 cell.set_wall(False)
                 cell.set_explored(False)
 
+    def clear_explored(self):
+        for column in self.cells:
+            for cell in column:
+                cell.set_explored(False)
+
     def render(self, surface: pygame.Surface):
         rects = []
         for column in self.cells:
@@ -264,15 +269,17 @@ def main():
                         # TODO: Do things based on which button was clicked
                         if button_clicked.text == "Run":
                             # TODO: Begin algorithm animation
+                            level.clear_explored()
                             path = a_star.a_star(level.start, level.destination)
-                            for cell in path:
-                                cell.set_explored(True)
+                            if path is not None:
+                                for cell in path:
+                                    cell.set_explored(True)
                         if button_clicked.text == "Clear":
                             level.clear_walls()
                             level.set_neighbors()
                     button_clicked = None
 
-        # changes cells to wall when mouse is drug over
+        # changes cells to wall when mouse is dragged over
         if mouse_held:
             mouse_pos = pygame.mouse.get_pos()
             mouse_cell = level.get_cell_from_window(mouse_pos[0], mouse_pos[1])
