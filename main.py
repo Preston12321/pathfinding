@@ -46,7 +46,7 @@ def distance(cell_1, cell_2):
 
 def set_wall(cell):
     if cell is not None and not cell.is_start and not cell.is_destination and not cell.is_wall:
-        cell.make_wall()
+        cell.set_wall(True)
 
 
 class Level(object):
@@ -64,9 +64,9 @@ class Level(object):
                     rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
                     c = Cell(rect, x, y, walls[x][y])
                     if x == START_NODE[0] and y == START_NODE[1]:
-                        c.make_start()
+                        c.set_start(True)
                     if x == DESTINATION_NODE[0] and y == DESTINATION_NODE[1]:
-                        c.make_destination()
+                        c.set_destination(True)
                     column.append(c)
                 self.cells.append(column)
         self.update_neighbors()
@@ -149,17 +149,23 @@ class Cell(object):
         if not neighbor.is_wall:
             self.neighbors.append(neighbor)
 
-    def set_wall(self, wall: bool):
-        self.is_wall = wall
-        self.color = CELL_COLOR_WALL if wall else CELL_COLOR_EMPTY
+    def set_wall(self, value: bool):
+        if self.is_wall == value:
+            return
+        self.is_wall = value
+        self.color = CELL_COLOR_WALL if value else CELL_COLOR_EMPTY
 
-    def make_destination(self):
+    def set_destination(self, value: bool):
+        if self.is_destination == value:
+            return
         self.is_destination = True
-        self.color = CELL_COLOR_DESTINATION
+        self.color = CELL_COLOR_DESTINATION if value else CELL_COLOR_EMPTY
 
-    def make_start(self):
-        self.is_start = True
-        self.color = CELL_COLOR_START
+    def set_start(self, value: bool):
+        if self.is_start == value:
+            return
+        self.is_start = value
+        self.color = CELL_COLOR_START if value else CELL_COLOR_EMPTY
 
     def __str__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
