@@ -1,10 +1,14 @@
-import heapq
-import main
+import math
+import level as lvl
 
 # copy pasted https://stackabuse.com/basic-ai-concepts-a-search-algorithm/
 
 
-def a_star(start: main.Cell, destination: main.Cell):
+def distance(cell_1, cell_2):
+    return math.sqrt((cell_1.x - cell_2.x) ** 2 + (cell_1.y - cell_2.y) ** 2)
+
+
+def a_star(start: lvl.Cell, destination: lvl.Cell):
     open_list = {start}
     closed_list = set([])
     g = {start: 0}
@@ -16,7 +20,7 @@ def a_star(start: main.Cell, destination: main.Cell):
         best = None
 
         for v in open_list:
-            if best is None or g[v] + main.distance(v, destination) < g[best] + main.distance(best, destination):
+            if best is None or g[v] + distance(v, destination) < g[best] + distance(best, destination):
                 best = v
 
         if best is None:
