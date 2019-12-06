@@ -1,7 +1,8 @@
 import heapq
 import main
 
-## copy pasted https://stackabuse.com/basic-ai-concepts-a-search-algorithm/
+# copy pasted https://stackabuse.com/basic-ai-concepts-a-search-algorithm/
+
 
 def a_star(start: main.Cell, destination: main.Cell):
     open_list = {start}

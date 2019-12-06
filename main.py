@@ -10,8 +10,8 @@ CELL_WIDTH = 20
 CELL_HEIGHT = 20
 CELL_COUNT_X = 25
 CELL_COUNT_Y = 25
-START_NODE = (0, 0)
-DESTINATION_NODE = (5, 5)
+START_NODE = (3, 7)
+DESTINATION_NODE = (22, 20)
 
 # Calculate the actual pixel dimensions of our window
 WINDOW_WIDTH = CELL_WIDTH * CELL_COUNT_X + DIVIDER_WIDTH * (CELL_COUNT_X - 1)
@@ -32,7 +32,7 @@ CELL_COLOR_EMPTY = pygame.Color(240, 240, 240)
 # noinspection PyArgumentList
 CELL_COLOR_WALL = pygame.Color(60, 60, 60)
 # noinspection PyArgumentList
-CELL_COLOR_EXPLORED = pygame.Color(0, 255, 0)
+CELL_COLOR_EXPLORED = pygame.Color(0, 0, 255)
 # noinspection PyArgumentList
 CELL_COLOR_START = pygame.Color(0, 255, 0)
 # noinspection PyArgumentList
@@ -105,6 +105,7 @@ class Level(object):
         for column in self.cells:
             for cell in column:
                 cell.set_wall(False)
+                cell.set_explored(False)
 
     def render(self, surface: pygame.Surface):
         rects = []
@@ -153,6 +154,7 @@ class Cell(object):
         self.is_wall = is_wall
         self.is_destination = False
         self.is_start = False
+        self.is_explored = False
 
     def add_neighbor(self, neighbor: "Cell"):
         if not neighbor.is_wall and neighbor not in self.neighbors:
@@ -177,6 +179,14 @@ class Cell(object):
             return
         self.is_start = value
         self.color = CELL_COLOR_START if value else CELL_COLOR_EMPTY
+
+    def set_explored(self, value: bool):
+        if self.is_destination or self.is_start or self.is_wall:
+            return
+        if self.is_explored == value:
+            return
+        self.is_explored = value
+        self.color = CELL_COLOR_EXPLORED if value else CELL_COLOR_EMPTY
 
     def __str__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
@@ -254,7 +264,9 @@ def main():
                         # TODO: Do things based on which button was clicked
                         if button_clicked.text == "Run":
                             # TODO: Begin algorithm animation
-                            a_star.a_star(level.start, level.destination)
+                            path = a_star.a_star(level.start, level.destination)
+                            for cell in path:
+                                cell.set_explored(True)
                         if button_clicked.text == "Clear":
                             level.clear_walls()
                             level.set_neighbors()
