@@ -39,10 +39,10 @@ def a_star(start: main.Cell, destination: main.Cell):
             if m not in open_list and m not in closed_list:
                 open_list.add(m)
                 parents[m] = best
-                g[m] = g[best] + 1
+                g[m] = g[best] + best.neighbors[m]
             else:
-                if g[m] > g[best] + 1:
-                    g[m] = g[best] + 1  # TODO: change diagonal weight to sqrt(2)
+                if g[m] > g[best] + best.neighbors[m]:
+                    g[m] = g[best] + best.neighbors[m]  # TODO: change diagonal weight to sqrt(2)
                     parents[m] = best
 
                     if m in closed_list:

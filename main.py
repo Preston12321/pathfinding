@@ -78,19 +78,19 @@ class Level(object):
         for column in self.cells:
             for cell in column:
                 if wall in cell.neighbors:
-                    cell.neighbors.remove(wall)
+                    cell.neighbors.pop(wall)
 
     def set_neighbors(self):
         for column in self.cells:
             for cell in column:
                 self.define_neighbors(cell)
 
-    def adjacency_dict(self):
-        dicta = {}
-        for column in self.cells:
-            for cell in column:
-                dicta[cell] = cell.neighbors
-        return dicta
+    # def adjacency_dict(self):
+    #     dicta = {}
+    #     for column in self.cells:
+    #         for cell in column:
+    #             dicta[cell] = cell.neighbors
+    #     return dicta
 
     def get_cell(self, x, y):
         return self.cells[x][y]
@@ -125,28 +125,28 @@ class Level(object):
         y = cell.y
 
         if cell.is_wall:
-            cell.neighbors = []
+            cell.neighbors = {}
             return
 
         if x != 0:
-            cell.add_neighbor(self.cells[x - 1][y])
+            cell.add_neighbor(self.cells[x - 1][y], 1)
             if y != 0:
-                cell.add_neighbor(self.cells[x - 1][y - 1])
+                cell.add_neighbor(self.cells[x - 1][y - 1], math.sqrt(2))
             if y != CELL_COUNT_Y - 1:
-                cell.add_neighbor(self.cells[x - 1][y + 1])
+                cell.add_neighbor(self.cells[x - 1][y + 1], math.sqrt(2))
 
         if x != CELL_COUNT_X - 1:
-            cell.add_neighbor(self.cells[x + 1][y])
+            cell.add_neighbor(self.cells[x + 1][y], 1)
             if y != 0:
-                cell.add_neighbor(self.cells[x + 1][y - 1])
+                cell.add_neighbor(self.cells[x + 1][y - 1], math.sqrt(2))
             if y != CELL_COUNT_Y - 1:
-                cell.add_neighbor(self.cells[x + 1][y + 1])
+                cell.add_neighbor(self.cells[x + 1][y + 1], math.sqrt(2))
 
         if y != 0:
-            cell.add_neighbor(self.cells[x][y - 1])
+            cell.add_neighbor(self.cells[x][y - 1], 1)
 
         if y != CELL_COUNT_Y - 1:
-            cell.add_neighbor(self.cells[x][y + 1])
+            cell.add_neighbor(self.cells[x][y + 1], 1)
 
 
 class Cell(object):
@@ -155,21 +155,21 @@ class Cell(object):
         self.y = y
         self.rect = rect
         self.color = CELL_COLOR_WALL if is_wall else CELL_COLOR_EMPTY
-        self.neighbors = []
+        self.neighbors = {}
         self.is_wall = is_wall
         self.is_destination = False
         self.is_start = False
         self.is_explored = False
 
-    def add_neighbor(self, neighbor: "Cell"):
+    def add_neighbor(self, neighbor: "Cell", weight):
         if not neighbor.is_wall and neighbor not in self.neighbors:
-            self.neighbors.append(neighbor)
+            self.neighbors[neighbor] = weight
 
     def set_wall(self, value: bool):
         if self.is_wall == value:
             return
         if value:
-            self.neighbors = []
+            self.neighbors = {}
         self.is_wall = value
         self.color = CELL_COLOR_WALL if value else CELL_COLOR_EMPTY
 
