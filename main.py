@@ -11,8 +11,10 @@ CELL_WIDTH = 20
 CELL_HEIGHT = 20
 CELL_COUNT_X = 25
 CELL_COUNT_Y = 25
-START_NODE = (3, 7)
-DESTINATION_NODE = (22, 20)
+START_NODE = (3, 4)
+DESTINATION_NODE = (20, 20)
+
+COUNT_SPEED = 2
 
 # Calculate the actual pixel dimensions of our window
 WINDOW_WIDTH = CELL_WIDTH * CELL_COUNT_X + DIVIDER_WIDTH * (CELL_COUNT_X - 1)
@@ -259,6 +261,7 @@ def main():
     mouse_held = False
     button_clicked = None
     counter = 0
+    run_clicked = False
 
     while True:
         # Handle events in the queue
@@ -279,22 +282,37 @@ def main():
                         # TODO: Do things based on which button was clicked
                         if button_clicked.text == "Run":
                             # TODO: Begin algorithm animation
+                            run_clicked = True
+                            counter = 0
                             level.clear_explored()
                             astar = astar2.a_star(level.start, level.destination)
                             path = astar[0]
                             cloud = astar[1]
-                            if path is not None:
-                                for cell in path:
-                                    cell.set_explored(True)
+                            # if path is not None:
+                            #     for cell in path:
+                            #         cell.set_explored(True)
                         if button_clicked.text == "Clear":
                             level.clear_walls()
                             level.set_neighbors()
                             counter = 0
+                            cloud = []
+                            path = []
                     button_clicked = None
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    cloud[counter].set_cloud(True)
-                    counter = counter + 1
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_RIGHT:
+            #         cloud[counter].set_cloud(True)
+            #         counter = counter + 1
+
+        # animates cloud
+        if counter % COUNT_SPEED == 0 and run_clicked and counter//COUNT_SPEED < len(cloud):
+            cloud[counter//COUNT_SPEED].set_cloud(True)
+
+        counter = counter + 1
+
+        if run_clicked and counter//COUNT_SPEED >= len(cloud) and len(cloud) != 0:
+            if path is not None:
+                for cell in path:
+                    cell.set_explored(True)
 
         # changes cells to wall when mouse is dragged over
         if mouse_held:
@@ -306,6 +324,7 @@ def main():
         updates = level.render(window)
         updates.extend(action_bar.render(window))
         pygame.display.update(updates)
+
 
         # Wait between frames
         pygame.time.wait(10)
