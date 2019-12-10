@@ -1,7 +1,7 @@
 import pygame
 import level as lvl
 import action_bar as ab
-import astar2
+import a_star
 
 COUNT_SPEED = 2
 
@@ -45,7 +45,7 @@ def main():
                             run_clicked = True
                             counter = 0
                             level.clear_explored()
-                            astar = astar2.a_star(level.start, level.destination)
+                            astar = a_star.a_star(level.start, level.destination)
                             path = astar[0]
                             cloud = astar[1]
                             # if path is not None:
@@ -58,10 +58,6 @@ def main():
                             cloud = []
                             path = []
                     button_clicked = None
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_RIGHT:
-            #         cloud[counter].set_cloud(True)
-            #         counter = counter + 1
 
         # animates cloud
         if counter % COUNT_SPEED == 0 and run_clicked and counter//COUNT_SPEED < len(cloud):
@@ -84,7 +80,6 @@ def main():
         updates = level.render(window)
         updates.extend(action_bar.render(window))
         pygame.display.update(updates)
-
 
         # Wait between frames
         pygame.time.wait(10)

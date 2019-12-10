@@ -69,13 +69,6 @@ class Level(object):
             for cell in column:
                 self.define_neighbors(cell)
 
-    # def adjacency_dict(self):
-    #     dicta = {}
-    #     for column in self.cells:
-    #         for cell in column:
-    #             dicta[cell] = cell.neighbors
-    #     return dicta
-
     def get_cell(self, x, y):
         return self.cells[x][y]
 
