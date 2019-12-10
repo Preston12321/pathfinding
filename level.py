@@ -81,6 +81,7 @@ class Level(object):
         for column in self.cells:
             for cell in column:
                 cell.set_explored(False)
+                cell.set_cloud(False)
 
     def render(self, surface: pygame.Surface):
         rects = []

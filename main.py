@@ -23,6 +23,7 @@ def main():
     button_clicked = None
     counter = 0
     run_clicked = False
+    drawing_cloud = True
 
     while True:
         # Handle events in the queue
@@ -48,9 +49,6 @@ def main():
                             astar = a_star.a_star(level.start, level.destination)
                             path = astar[0]
                             cloud = astar[1]
-                            # if path is not None:
-                            #     for cell in path:
-                            #         cell.set_explored(True)
                         if button_clicked.text == "Clear":
                             level.clear_walls()
                             level.set_neighbors()
@@ -60,15 +58,25 @@ def main():
                     button_clicked = None
 
         # animates cloud
-        if counter % COUNT_SPEED == 0 and run_clicked and counter//COUNT_SPEED < len(cloud):
-            cloud[counter//COUNT_SPEED].set_cloud(True)
+        if run_clicked:
+            if counter % COUNT_SPEED == 0 and run_clicked:
+                if drawing_cloud:
+                    if counter//COUNT_SPEED < len(cloud):
+                        cloud[counter//COUNT_SPEED].set_cloud(True)
 
-        counter = counter + 1
+                    if counter//COUNT_SPEED == len(cloud):
+                        counter = 0
+                        drawing_cloud = False
 
-        if run_clicked and counter//COUNT_SPEED >= len(cloud) and len(cloud) != 0:
-            if path is not None:
-                for cell in path:
-                    cell.set_explored(True)
+                if not drawing_cloud:
+                    if counter//COUNT_SPEED < len(path):
+                        path[counter//COUNT_SPEED].set_explored(True)
+
+                    if counter//COUNT_SPEED == len(path):
+                        drawing_cloud = True
+                        run_clicked = False
+
+            counter = counter + 1
 
         # changes cells to wall when mouse is dragged over
         if mouse_held:
