@@ -65,8 +65,11 @@ def main():
                         cloud[counter//COUNT_SPEED].set_cloud(True)
 
                     if counter//COUNT_SPEED == len(cloud):
-                        counter = 0
-                        drawing_cloud = False
+                        if path is None:
+                            run_clicked = False
+                        else:
+                            counter = 0
+                            drawing_cloud = False
 
                 if not drawing_cloud:
                     if counter//COUNT_SPEED < len(path):
