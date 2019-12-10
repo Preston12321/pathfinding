@@ -1,9 +1,6 @@
 import pygame
-import json
 import math
 import action_bar as ab
-
-DEFAULT_LEVEL = "blank.json"
 
 # Constants to define the scale of our tiles and screen
 DIVIDER_WIDTH = 1
@@ -30,30 +27,25 @@ CELL_COLOR_CLOUD = pygame.Color(173, 216, 230)
 
 
 class Level(object):
-    def __init__(self, file_name: str = DEFAULT_LEVEL):
+    def __init__(self):
         self.start = None
         self.destination = None
-
-        with open(file_name) as level_file:
-            data = json.load(level_file)
-            # A 2D array of booleans to signify where the walls are in the level
-            walls = data["walls"]
-            self.cells = []
-            for x in range(0, CELL_COUNT_X):
-                column = []
-                for y in range(0, CELL_COUNT_Y):
-                    window_x = x * (CELL_WIDTH + DIVIDER_WIDTH)
-                    window_y = y * (CELL_HEIGHT + DIVIDER_WIDTH) + ab.ACTION_BAR_HEIGHT
-                    rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
-                    c = Cell(rect, x, y, walls[x][y])
-                    if x == START_NODE[0] and y == START_NODE[1]:
-                        c.set_start(True)
-                        self.start = c
-                    if x == DESTINATION_NODE[0] and y == DESTINATION_NODE[1]:
-                        c.set_destination(True)
-                        self.destination = c
-                    column.append(c)
-                self.cells.append(column)
+        self.cells = []
+        for x in range(0, CELL_COUNT_X):
+            column = []
+            for y in range(0, CELL_COUNT_Y):
+                window_x = x * (CELL_WIDTH + DIVIDER_WIDTH)
+                window_y = y * (CELL_HEIGHT + DIVIDER_WIDTH) + ab.ACTION_BAR_HEIGHT
+                rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
+                c = Cell(rect, x, y, False)
+                if x == START_NODE[0] and y == START_NODE[1]:
+                    c.set_start(True)
+                    self.start = c
+                if x == DESTINATION_NODE[0] and y == DESTINATION_NODE[1]:
+                    c.set_destination(True)
+                    self.destination = c
+                column.append(c)
+            self.cells.append(column)
         self.set_neighbors()
 
     def set_wall(self, wall: "Cell"):
