@@ -1,7 +1,8 @@
 import json
 import pygame
 import math
-import a_star
+# import a_star
+import astar2
 
 # Constants to define the scale of our tiles and screen
 DIVIDER_WIDTH = 1
@@ -37,6 +38,8 @@ CELL_COLOR_EXPLORED = pygame.Color(0, 0, 255)
 CELL_COLOR_START = pygame.Color(0, 255, 0)
 # noinspection PyArgumentList
 CELL_COLOR_DESTINATION = pygame.Color(255, 0, 0)
+# noinspection PyArgumentList
+CELL_COLOR_CLOUD = pygame.Color(173, 216, 230)
 
 DEFAULT_LEVEL = "blank.json"
 
@@ -106,6 +109,7 @@ class Level(object):
             for cell in column:
                 cell.set_wall(False)
                 cell.set_explored(False)
+                cell.set_cloud(False)
 
     def clear_explored(self):
         for column in self.cells:
@@ -193,6 +197,11 @@ class Cell(object):
         self.is_explored = value
         self.color = CELL_COLOR_EXPLORED if value else CELL_COLOR_EMPTY
 
+    def set_cloud(self, value: bool):
+        if self.is_destination or self.is_start or self.is_wall:
+            return
+        self.color = CELL_COLOR_CLOUD if value else CELL_COLOR_EMPTY
+
     def __str__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
 
@@ -249,6 +258,7 @@ def main():
     level = Level()
     mouse_held = False
     button_clicked = None
+    counter = 0
 
     while True:
         # Handle events in the queue
@@ -270,14 +280,21 @@ def main():
                         if button_clicked.text == "Run":
                             # TODO: Begin algorithm animation
                             level.clear_explored()
-                            path = a_star.a_star(level.start, level.destination)
+                            astar = astar2.a_star(level.start, level.destination)
+                            path = astar[0]
+                            cloud = astar[1]
                             if path is not None:
                                 for cell in path:
                                     cell.set_explored(True)
                         if button_clicked.text == "Clear":
                             level.clear_walls()
                             level.set_neighbors()
+                            counter = 0
                     button_clicked = None
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    cloud[counter].set_cloud(True)
+                    counter = counter + 1
 
         # changes cells to wall when mouse is dragged over
         if mouse_held:

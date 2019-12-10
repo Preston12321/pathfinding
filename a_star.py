@@ -10,12 +10,13 @@ def a_star(start: main.Cell, destination: main.Cell):
     g = {start: 0}
 
     parents = {start: start}
+    bigcloud = []
 
     while len(open_list) > 0:
         best = None
 
         for v in open_list:
-            if best is None or g[v] + main.distance(start, v) < g[best] + main.distance(start, best):
+            if best is None or g[v] + main.distance(v, destination) < g[best] + main.distance(best, destination):
                 best = v
 
         if best is None:
@@ -33,8 +34,9 @@ def a_star(start: main.Cell, destination: main.Cell):
             path.reverse()
 
             print("path is: {}".format(path))
-            return path
+            return path, bigcloud
 
+        bigcloud.append(best)
         for m in best.neighbors:
             if m not in open_list and m not in closed_list:
                 open_list.add(m)
@@ -42,7 +44,7 @@ def a_star(start: main.Cell, destination: main.Cell):
                 g[m] = g[best] + best.neighbors[m]
             else:
                 if g[m] > g[best] + best.neighbors[m]:
-                    g[m] = g[best] + best.neighbors[m]  # TODO: change diagonal weight to sqrt(2)
+                    g[m] = g[best] + best.neighbors[m]
                     parents[m] = best
 
                     if m in closed_list:
