@@ -4,13 +4,13 @@ ACTION_BAR_HEIGHT = 40
 
 # Color scheme constants
 # noinspection PyArgumentList
-ACTION_BAR_COLOR = pygame.Color(255, 255, 255)
+ACTION_BAR_COLOR = pygame.Color(189, 189, 189)
 # noinspection PyArgumentList
 BUTTON_TEXT_COLOR = pygame.Color(255, 255, 255)
 # noinspection PyArgumentList
-BUTTON_COLOR_RUN = pygame.Color(97, 243, 97)
+BUTTON_COLOR_RUN = pygame.Color(160, 160, 160)
 # noinspection PyArgumentList
-BUTTON_COLOR_CLEAR = pygame.Color(243, 97, 97)
+BUTTON_COLOR_CLEAR = pygame.Color(160, 160, 160)
 
 
 class ActionBar(object):

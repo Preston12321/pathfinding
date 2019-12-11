@@ -13,15 +13,15 @@ DESTINATION_NODE = (20, 20)
 
 # Color scheme constants
 # noinspection PyArgumentList
-CELL_COLOR_EMPTY = pygame.Color(240, 240, 240)
+CELL_COLOR_EMPTY = pygame.Color(255, 255, 255)
 # noinspection PyArgumentList
 CELL_COLOR_WALL = pygame.Color(60, 60, 60)
 # noinspection PyArgumentList
-CELL_COLOR_EXPLORED = pygame.Color(0, 0, 255)
+CELL_COLOR_EXPLORED = pygame.Color(31, 107, 200)
 # noinspection PyArgumentList
-CELL_COLOR_START = pygame.Color(0, 255, 0)
+CELL_COLOR_START = pygame.Color(107, 170, 37)
 # noinspection PyArgumentList
-CELL_COLOR_DESTINATION = pygame.Color(255, 0, 0)
+CELL_COLOR_DESTINATION = pygame.Color(209, 38, 38)
 # noinspection PyArgumentList
 CELL_COLOR_CLOUD = pygame.Color(173, 216, 230)
 
