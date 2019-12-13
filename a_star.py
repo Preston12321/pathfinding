@@ -42,6 +42,7 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
                 came_from[neighbor] = current
                 neighbor.set_g(tentative_gscore)
                 neighbor.set_f(neighbor.get_g() + h(neighbor))
+                heapq.heapify(open_set)
                 if neighbor not in open_set:
                     heapq.heappush(open_set, neighbor)
 
