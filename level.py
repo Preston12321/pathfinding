@@ -82,6 +82,8 @@ class Level(object):
             for cell in column:
                 cell.set_explored(False)
                 cell.set_cloud(False)
+                cell.set_g(None)
+                cell.set_f(None)
 
     def render(self, surface: pygame.Surface):
         rects = []
@@ -132,6 +134,9 @@ class Cell(object):
         self.is_start = False
         self.is_explored = False
 
+        self.g = None
+        self.f = None
+
     def add_neighbor(self, neighbor: "Cell", weight):
         if not neighbor.is_wall and neighbor not in self.neighbors:
             self.neighbors[neighbor] = weight
@@ -168,6 +173,18 @@ class Cell(object):
         if self.is_destination or self.is_start or self.is_wall:
             return
         self.color = CELL_COLOR_CLOUD if value else CELL_COLOR_EMPTY
+
+    def set_g(self, value):
+        self.g = value
+
+    def set_f(self, value):
+        self.f = value
+
+    def get_g(self):
+        return self.g
+
+    def get_f(self):
+        return self.f
 
     def __str__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"

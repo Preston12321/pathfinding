@@ -13,8 +13,8 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
 
     open_set = {start}
     came_from = {start: start}
-    g_score = {start: 0}
-    f_score = {start: h(start)}
+    start.set_g(0)
+    start.set_f(h(start))
 
     bigcloud = []
 
@@ -22,7 +22,7 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
         current = None
 
         for v in open_set:
-            if current is None or f_score[v] < f_score[current]:
+            if current is None or v.get_f() < current.get_f():
                 current = v
 
         if current is None:
@@ -45,13 +45,13 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
         open_set.remove(current)
         bigcloud.append(current)
         for neighbor in current.neighbors:
-            tentative_gscore = g_score[current] + distance(current, neighbor)
-            if neighbor not in g_score:
-                g_score[neighbor] = 100000000000
-            if tentative_gscore < g_score[neighbor]:
+            tentative_gscore = current.get_g() + distance(current, neighbor)
+            if neighbor.get_g() is None:
+                neighbor.set_g(100000000000)
+            if tentative_gscore < neighbor.get_g():
                 came_from[neighbor] = current
-                g_score[neighbor] = tentative_gscore
-                f_score[neighbor] = g_score[neighbor] + h(neighbor)
+                neighbor.set_g(tentative_gscore)
+                neighbor.set_f(neighbor.get_g() + h(neighbor))
                 if neighbor not in open_set:
                     open_set.add(neighbor)
 
