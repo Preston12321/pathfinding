@@ -1,5 +1,6 @@
 import math
 import level as lvl
+import heapq
 
 
 def distance(cell_1, cell_2):
@@ -11,7 +12,7 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
     def h(cell):
         return distance(cell, destination)
 
-    open_set = {start}
+    open_set = [start]
     came_from = {start: start}
     start.set_g(0)
     start.set_f(h(start))
@@ -19,15 +20,8 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
     bigcloud = []
 
     while len(open_set) > 0:
-        current = None
-
-        for v in open_set:
-            if current is None or v.get_f() < current.get_f():
-                current = v
-
-        if current is None:
-            print("no path")
-            return None, bigcloud
+        current = heapq.heappop(open_set)
+        bigcloud.append(current)
 
         if current == destination:
             path = []
@@ -42,8 +36,6 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
             print("path is: {}".format(path))
             return path, bigcloud
 
-        open_set.remove(current)
-        bigcloud.append(current)
         for neighbor in current.neighbors:
             tentative_gscore = current.get_g() + distance(current, neighbor)
             if tentative_gscore < neighbor.get_g():
@@ -51,7 +43,7 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
                 neighbor.set_g(tentative_gscore)
                 neighbor.set_f(neighbor.get_g() + h(neighbor))
                 if neighbor not in open_set:
-                    open_set.add(neighbor)
+                    heapq.heappush(open_set, neighbor)
 
     print("no path")
     return None, bigcloud
