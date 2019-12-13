@@ -82,7 +82,7 @@ class Level(object):
             for cell in column:
                 cell.set_explored(False)
                 cell.set_cloud(False)
-                cell.set_g(None)
+                cell.set_g(math.inf)
                 cell.set_f(None)
 
     def render(self, surface: pygame.Surface):
@@ -134,7 +134,7 @@ class Cell(object):
         self.is_start = False
         self.is_explored = False
 
-        self.g = None
+        self.g = math.inf
         self.f = None
 
     def add_neighbor(self, neighbor: "Cell", weight):
@@ -191,3 +191,6 @@ class Cell(object):
 
     def __repr__(self):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
+
+    def __lt__(self, other):
+        return self.f < other.f
