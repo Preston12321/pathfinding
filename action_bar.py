@@ -8,9 +8,9 @@ ACTION_BAR_COLOR = pygame.Color(189, 189, 189)
 # noinspection PyArgumentList
 BUTTON_TEXT_COLOR = pygame.Color(255, 255, 255)
 # noinspection PyArgumentList
-BUTTON_COLOR_RUN = pygame.Color(160, 160, 160)
+BUTTON_COLOR_RUN = pygame.Color(107, 170, 37)
 # noinspection PyArgumentList
-BUTTON_COLOR_CLEAR = pygame.Color(160, 160, 160)
+BUTTON_COLOR_CLEAR = pygame.Color(209, 38, 38)
 
 
 class ActionBar(object):
