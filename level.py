@@ -8,6 +8,8 @@ CELL_WIDTH = 20
 CELL_HEIGHT = 20
 CELL_COUNT_X = 25
 CELL_COUNT_Y = 25
+
+# Hard-coded start and destination coordinates
 START_NODE = (3, 4)
 DESTINATION_NODE = (20, 20)
 
@@ -34,16 +36,24 @@ class Level(object):
         for x in range(0, CELL_COUNT_X):
             column = []
             for y in range(0, CELL_COUNT_Y):
+                # Calculate the coordinates of the top left corner of the cell
                 window_x = x * (CELL_WIDTH + DIVIDER_WIDTH)
                 window_y = y * (CELL_HEIGHT + DIVIDER_WIDTH) + ab.ACTION_BAR_HEIGHT
+
+                # Create a cell with a set size and location
                 rect = pygame.Rect(window_x, window_y, CELL_WIDTH, CELL_HEIGHT)
                 c = Cell(rect, x, y, False)
-                if x == START_NODE[0] and y == START_NODE[1]:
+
+                # If (x,y) matches START_NODE, set cell as start node
+                if (x, y) == START_NODE:
                     c.set_start(True)
                     self.start = c
-                if x == DESTINATION_NODE[0] and y == DESTINATION_NODE[1]:
+
+                # If (x,y) matches DESTINATION_NODE, set cell as destination node
+                if (x, y) == DESTINATION_NODE:
                     c.set_destination(True)
                     self.destination = c
+
                 column.append(c)
             self.cells.append(column)
         self.set_neighbors()
@@ -57,6 +67,7 @@ class Level(object):
                     cell.neighbors.pop(wall)
 
     def set_neighbors(self):
+        # Set neighbor cells of all cells
         for column in self.cells:
             for cell in column:
                 self.define_neighbors(cell)
@@ -87,10 +98,14 @@ class Level(object):
 
     def render(self, surface: pygame.Surface):
         rects = []
+
+        # Render all cells onto surface
         for column in self.cells:
             for cell in column:
                 rect = pygame.draw.rect(surface, cell.color, cell.rect)
                 rects.append(rect)
+
+        # Return list of areas on the window that were drawn to
         return rects
 
     def define_neighbors(self, cell):
