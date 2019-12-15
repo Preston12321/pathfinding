@@ -37,7 +37,7 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
             return path, bigcloud
 
         for neighbor in current.neighbors:
-            tentative_gscore = current.get_g() + distance(current, neighbor)
+            tentative_gscore = current.get_g() + current.neighbors[neighbor]
             if tentative_gscore < neighbor.get_g():
                 came_from[neighbor] = current
                 neighbor.set_g(tentative_gscore)
