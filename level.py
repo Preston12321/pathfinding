@@ -61,7 +61,7 @@ class Level(object):
     def set_wall(self, wall: "Cell"):
         if wall is not None and not wall.is_start and not wall.is_destination and not wall.is_wall:
             wall.set_wall(True)
-        for column in self.cells:
+        for column in self.cells:  # remove wall from adjacency matrix of all cells
             for cell in column:
                 if wall in cell.neighbors:
                     cell.neighbors.pop(wall)
@@ -109,6 +109,7 @@ class Level(object):
         return rects
 
     def define_neighbors(self, cell):
+        # Fills default adjacency list with 8 adjacent cells and distances, handling border cases
         x = cell.x
         y = cell.y
 
@@ -149,8 +150,8 @@ class Cell(object):
         self.is_start = False
         self.is_explored = False
 
-        self.g = math.inf
-        self.f = None
+        self.g = math.inf  # distance from starting node to cell, updated by a* algorithm
+        self.f = None  # total cost from starting node to cell, = g(cell) + h(cell), updated by a* algorithm
 
     def add_neighbor(self, neighbor: "Cell", weight):
         if not neighbor.is_wall and neighbor not in self.neighbors:
@@ -208,4 +209,4 @@ class Cell(object):
         return "(" + str(self.x) + ", " + str(self.y) + ")"
 
     def __lt__(self, other):
-        return self.f < other.f
+        return self.f < other.f  # used in ordering heap

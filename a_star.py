@@ -19,14 +19,14 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
 
     bigcloud = []
 
-    while len(open_set) > 0:
-        current = heapq.heappop(open_set)
-        bigcloud.append(current)
+    while len(open_set) > 0:  # while there are nodes to explore
+        current = heapq.heappop(open_set)  # removes lowest cost node from open set
+        bigcloud.append(current)  # keeps track of nodes being explored as current
 
         if current == destination:
             path = []
 
-            while came_from[current] != current:
+            while came_from[current] != current:  # reconstruct path from parent dictionary
                 path.append(current)
                 current = came_from[current]
 
@@ -38,11 +38,11 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
 
         for neighbor in current.neighbors:
             tentative_gscore = current.get_g() + current.neighbors[neighbor]
-            if tentative_gscore < neighbor.get_g():
+            if tentative_gscore < neighbor.get_g():  # if path through current is shorter
                 came_from[neighbor] = current
                 neighbor.set_g(tentative_gscore)
-                neighbor.set_f(neighbor.get_g() + h(neighbor))
-                heapq.heapify(open_set)
+                neighbor.set_f(neighbor.get_g() + h(neighbor))  # save the new shortest path and update g and f values
+                heapq.heapify(open_set)  # make sure open_set still satisfies heap property with changed f values
                 if neighbor not in open_set:
                     heapq.heappush(open_set, neighbor)
 
