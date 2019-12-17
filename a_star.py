@@ -42,7 +42,8 @@ def a_star(start: lvl.Cell, destination: lvl.Cell):
                 came_from[neighbor] = current
                 neighbor.set_g(tentative_gscore)
                 neighbor.set_f(neighbor.get_g() + h(neighbor))  # save the new shortest path and update g and f values
-                heapq.heapify(open_set)  # make sure open_set still satisfies heap property with changed f values
+                if neighbor in open_set:
+                    heapq.heapify(open_set)  # make sure open_set still satisfies heap property with changed f values
                 if neighbor not in open_set:
                     heapq.heappush(open_set, neighbor)
 
