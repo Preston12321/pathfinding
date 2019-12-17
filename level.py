@@ -30,8 +30,6 @@ CELL_COLOR_CLOUD = pygame.Color(173, 216, 230)
 
 class Level(object):
     def __init__(self):
-        self.start = None
-        self.destination = None
         self.cells = []
         for x in range(0, CELL_COUNT_X):
             column = []
