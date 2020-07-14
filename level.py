@@ -117,17 +117,9 @@ class Level(object):
 
         if x != 0:
             cell.add_neighbor(self.cells[x - 1][y], 1)
-            if y != 0:
-                cell.add_neighbor(self.cells[x - 1][y - 1], math.sqrt(2))
-            if y != CELL_COUNT_Y - 1:
-                cell.add_neighbor(self.cells[x - 1][y + 1], math.sqrt(2))
 
         if x != CELL_COUNT_X - 1:
             cell.add_neighbor(self.cells[x + 1][y], 1)
-            if y != 0:
-                cell.add_neighbor(self.cells[x + 1][y - 1], math.sqrt(2))
-            if y != CELL_COUNT_Y - 1:
-                cell.add_neighbor(self.cells[x + 1][y + 1], math.sqrt(2))
 
         if y != 0:
             cell.add_neighbor(self.cells[x][y - 1], 1)
